@@ -1,8 +1,6 @@
 const WebSocket = require("ws");
 const axios = require("axios");
 
-const socket = new WebSocket('ws://localhost:8082/v1/stream');
-
 async function getRichieRichResponse(prompt) {
   try {
     const response = await axios.post(
@@ -18,12 +16,12 @@ async function getRichieRichResponse(prompt) {
 }
 
 function getWebSocketData(prompt) {
+  const socket = new WebSocket('ws://localhost:8082/v1/stream');
   return new Promise((resolve, reject) => {
     const responses = [];
 
     socket.addEventListener('open', () => {
       console.log('Connected to server');
-      console.log(prompt);
       socket.send(prompt);
     });
 

@@ -14,7 +14,7 @@ app.use(express.json());
 app.post("/", async (req, res) => {
   const requestPrompt = req.body.prompt;
   const response = await getWebSocketData(requestPrompt);
-  const responseHTML = RRML2HTML(response);
+  const responseHTML = RRML2HTML(response.join(""));
   res.send(responseHTML);
 });
 
