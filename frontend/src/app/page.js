@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { getPromptResponse } from "../../api/getPromptResponse";
+import { connectBackendWebSocket } from "../../api/connectBackendWebSocket";
 import { ChatResponse, ChatPrompt, TextArea } from "../components/chat";
 
 const agentTypes = {
@@ -38,7 +38,8 @@ export default function Home() {
     try {
       setIsLoadingResponse(true);
       addMessage(prompt, agentTypes.user);
-      const response = await getPromptResponse(prompt);
+      console.log("Sending")
+      const response = await connectBackendWebSocket(prompt, onMessageReceived);
       addMessage(response, agentTypes.richieRich);
       setPrompt("");
       setIsLoadingResponse(false);
@@ -47,6 +48,10 @@ export default function Home() {
       setIsLoadingResponse(false);
     }
   };
+
+  function onMessageReceived(data) {
+    console.log(data)
+  }
 
   useEffect(() => {
     scrollContainerRef.current.scrollTop =

@@ -1,23 +1,42 @@
 const express = require("express");
 const cors = require("cors");
+const url = require("url");
 
-const { getRichieRichResponse } = require("./clients/richieRich");
-const { getWebSocketData } = require("./clients/richieRich");
-const RRML2HTML = require("./utils/RRML2HTML");
+const { processAndPassWebSocketData } = require("./clients/richieRich");
+const http = require("http");
+
+const WebSocket = require("ws");
+const wsServer = new WebSocket.Server({ noServer: true });
 
 const PORT = 8081;
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
 
-app.post("/", async (req, res) => {
-  const requestPrompt = req.body.prompt;
-  const response = await getWebSocketData(requestPrompt);
-  const responseHTML = RRML2HTML(response.join(""));
-  res.send(responseHTML);
+wsServer.on("connection", async (ws) => {
+  console.log("Connected")
+  ws.on("message", async (prompt) => {
+    console.log("Received prompt from frontend: ", prompt);
+    processAndPassWebSocketData(prompt, ws);
+  });
 });
 
-app.listen(PORT, () => {
+server.on("upgrade", (request, socket, head) => {
+  console.log("Upgraded")
+  const pathname = url.parse(request.url).pathname;
+
+  if (pathname === "/v1/backend/stream") {
+    wsServer.handleUpgrade(request, socket, head, (ws) => {
+      wsServer.emit("connection", ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
+
+server.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
