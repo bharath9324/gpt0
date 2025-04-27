@@ -16,7 +16,6 @@ app.use(cors());
 app.use(express.json());
 
 wsServer.on("connection", async (ws) => {
-  console.log("Connected")
   ws.on("message", async (prompt) => {
     console.log("Received prompt from frontend: ", prompt);
     processAndPassWebSocketData(prompt, ws);
@@ -24,7 +23,6 @@ wsServer.on("connection", async (ws) => {
 });
 
 server.on("upgrade", (request, socket, head) => {
-  console.log("Upgraded")
   const pathname = url.parse(request.url).pathname;
 
   if (pathname === "/v1/backend/stream") {
