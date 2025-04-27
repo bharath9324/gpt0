@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const { getRichieRichResponse } = require("./clients/richieRich");
+const { getWebSocketData } = require("./clients/richieRich");
 const RRML2HTML = require("./utils/RRML2HTML");
 
 const PORT = 8081;
@@ -12,7 +13,7 @@ app.use(express.json());
 
 app.post("/", async (req, res) => {
   const requestPrompt = req.body.prompt;
-  const response = await getRichieRichResponse(requestPrompt);
+  const response = await getWebSocketData(requestPrompt);
   const responseHTML = RRML2HTML(response);
   res.send(responseHTML);
 });
