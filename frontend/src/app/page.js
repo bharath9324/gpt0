@@ -16,6 +16,7 @@ export default function Home() {
   const scrollContainerRef = useRef(null);
 
   const handleTextAreaChange = (event) => {
+    console.log("Triggered")
     setPrompt(event.target.value);
   };
 
@@ -38,9 +39,9 @@ export default function Home() {
     try {
       setIsLoadingResponse(true);
       addMessage(prompt, agentTypes.user);
+      addMessage("", agentTypes.richieRich);
       console.log("Sending")
-      const response = await connectBackendWebSocket(prompt, onMessageReceived);
-      addMessage(response, agentTypes.richieRich);
+      await connectBackendWebSocket(prompt, onMessageReceived);
       setPrompt("");
       setIsLoadingResponse(false);
     } catch (error) {
@@ -50,7 +51,15 @@ export default function Home() {
   };
 
   function onMessageReceived(data) {
-    console.log(data)
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages];
+      const lastIndex = updatedMessages.length - 1;
+      updatedMessages[lastIndex] = {
+        ...updatedMessages[lastIndex],
+        contents: updatedMessages[lastIndex].contents + data,
+      };
+      return updatedMessages;
+    });
   }
 
   useEffect(() => {

@@ -4,7 +4,6 @@ import { websocketUrl } from "./constants";
 export function connectBackendWebSocket(prompt, onMessageReceived) {
     const socket = new WebSocket(websocketUrl);
     return new Promise((resolve, reject) => {
-      console.log("Inside Promise")
       socket.addEventListener('open', () => {
         console.log('Connected to server');
         socket.send(prompt);

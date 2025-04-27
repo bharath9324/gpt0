@@ -30,7 +30,7 @@ function processAndPassWebSocketData(prompt, ws) {
       processAndSendResponse(responses, ws)
       ws.close()
       console.log('Connection closed by server');
-      resolve(); // Resolve with the collected data
+      resolve();
     });
 
     socket.addEventListener('error', (err) => {
@@ -41,7 +41,7 @@ function processAndPassWebSocketData(prompt, ws) {
 }
 
 function processAndSendResponse(response, ws) {
-  const procesedHTML = RRML2HTML(response.join());
+  const procesedHTML = RRML2HTML(response.join(""));
   ws.send(procesedHTML);
 }
 
